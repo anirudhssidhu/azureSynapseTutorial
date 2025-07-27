@@ -1,0 +1,114 @@
+{
+	"name": "SparkNotebook1",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPool1",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "ecade629-7482-425e-ba19-721b1301aa60"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/b3868f16-cd83-4412-9082-98862a609931/resourceGroups/AzSynapseRG/providers/Microsoft.Synapse/workspaces/azure-synapse-space1414/bigDataPools/SparkPool1",
+				"name": "SparkPool1",
+				"type": "Spark",
+				"endpoint": "https://azure-synapse-space1414.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool1",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Analyze the NYC Taxi Data with the Spark Pool"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.read.load(path='abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/Data/NYCTripSmall(DSP).parquet',format='parquet',)"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
+				"source": [
+					"display(df.limit(10))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Load the NYC taxi data into the Spark NYC taxi database"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"## create a spark database\n",
+					"spark.sql(\"CREATE DATABASE IF NOT EXISTS nyctaxi\")\n",
+					"\n",
+					"## write the data from the parquet file to the nyctaxi db and trip table\n",
+					"df.write.mode(\"overwrite\").saveAsTable(\"nyctaxi.trip\")"
+				],
+				"execution_count": 6
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					""
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
