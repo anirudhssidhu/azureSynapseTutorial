@@ -1,0 +1,99 @@
+{
+	"name": "SparkPoolNotebook1",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "2d9f90d3-2648-4891-8d50-5f67bda5ef89"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.read.load(path=\"abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/Data/NYCTripSmall(DSP).parquet\",\n",
+					"                            format=\"parquet\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"display(df.limit(10))"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"spark.sql(\"CREATE DATABASE IF NOT EXISTS nyctaxi\")\n",
+					"df.write.mode(\"overwrite\").saveAsTable(\"nyctaxi.trip\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.sql(\"SELECT * FROM nyctaxi.trip\")\n",
+					"display(df)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"spark.sql(\"DROP TABLE nyctaxi.passengercountstats IF EXISTS\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.sql(\"\"\"\n",
+					"                SELECT passenger_count,\n",
+					"                SUM(trip_distance) as SumTripDistance,\n",
+					"                AVG(trip_distance) as AvgTripDistance\n",
+					"                FROM nyctaxi.trip\n",
+					"                WHERE trip_distance > 0 AND passenger_count > 0\n",
+					"                GROUP BY passenger_count\n",
+					"                ORDER BY passenger_count\n",
+					"                \"\"\")\n",
+					"\n",
+					"display(df)\n",
+					"\n",
+					"df.write.saveAsTable(\"nyctaxi.passengercountstats\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df=spark.sql(\"SELECT * FROM nyctaxi.passengercountstats\")\n",
+					"display(df)"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
