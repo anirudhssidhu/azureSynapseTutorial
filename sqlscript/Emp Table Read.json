@@ -1,5 +1,5 @@
 {
-	"name": "SQL script 1",
+	"name": "Emp Table Read",
 	"properties": {
 		"content": {
 			"query": "SELECT \n*\nFROM\nOPENROWSET(\n    BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/Data/employee.csv',\n    FORMAT = 'csv',\n    HEADER_ROW = TRUE,\n    PARSER_VERSION = '2.0'\n) AS [result]",

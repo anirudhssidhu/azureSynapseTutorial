@@ -1,0 +1,17 @@
+{
+	"name": "Nyc Table Read",
+	"properties": {
+		"content": {
+			"query": "SELECT \n* \nFROM\nOPENROWSET(\n    BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/Data/NYCTripSmall.parquet',\n    FORMAT = 'PARQUET'\n) AS [result]\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
