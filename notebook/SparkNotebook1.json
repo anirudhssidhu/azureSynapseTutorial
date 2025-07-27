@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "51f34048-40eb-4ddb-b6fb-6ae36a9c1ff7"
+				"spark.autotune.trackingId": "ced2db41-ab47-4ec4-af60-adb5144698ea"
 			}
 		},
 		"metadata": {
@@ -166,10 +166,19 @@
 			},
 			{
 				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"outputs_hidden": true
+					},
+					"collapsed": false
+				},
 				"source": [
-					""
+					"df = spark.sql(\"\"\"SELECT * FROM nyctaxi.passengercountstats\n",
+					"                    ORDER BY AvgTripDistance_miles DESC\"\"\")\n",
+					"\n",
+					"display(df)"
 				],
-				"execution_count": null
+				"execution_count": 14
 			}
 		]
 	}
