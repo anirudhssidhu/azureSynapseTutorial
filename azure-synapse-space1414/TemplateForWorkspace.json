@@ -22,6 +22,15 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool1')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/azure-synapse-space1414-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -234,15 +243,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SparkPool1')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/SparkNotebook1')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -263,7 +263,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "332e45f8-e6f4-43d4-9e93-e64461439391"
+						"spark.autotune.trackingId": "e561b6ff-d7ae-47c3-9dbf-e6635c1ac4ef"
 					}
 				},
 				"metadata": {
@@ -314,7 +314,7 @@
 							"df = spark.read.load(path='abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/Data/NYCTripSmall(DSP).parquet',format='parquet',)"
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 5
 					},
 					{
 						"cell_type": "code",
@@ -323,6 +323,20 @@
 						},
 						"source": [
 							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\n",
+							"spark.sql(\"DROP DATABASE IF EXISTS nyctaxi CASCADE\")"
 						],
 						"outputs": [],
 						"execution_count": null
@@ -351,7 +365,60 @@
 							"df.write.mode(\"overwrite\").saveAsTable(\"nyctaxi.trip\")"
 						],
 						"outputs": [],
-						"execution_count": 6
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"df = spark.sql(\"SELECT * FROM nyctaxi.trip\")\n",
+							"display(df.limit(5))"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#### Analyze the NYC taxi data using spark and notebooks"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"df = spark.sql(\"\"\"\n",
+							"        SELECT passenger_count as PassengerCount,\n",
+							"        SUM(trip_distance) as SumTripDistance_miles,\n",
+							"        AVG(trip_distance) as AvgTripDistance_miles\n",
+							"        FROM nyctaxi.trip\n",
+							"        WHERE trip_distance > 0 AND passenger_count > 0\n",
+							"        GROUP BY passenger_count\n",
+							"        \"\"\")\n",
+							"display(df)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"df.write.saveAsTable(\"nyctaxi.passengercountstats\")"
+						],
+						"outputs": [],
+						"execution_count": 13
 					},
 					{
 						"cell_type": "code",
@@ -365,6 +432,31 @@
 				]
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool1')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 30
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 3,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "centralindia"
 		}
 	]
 }
