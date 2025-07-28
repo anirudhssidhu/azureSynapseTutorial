@@ -1,0 +1,17 @@
+{
+	"name": "PassengerCount SQL Script 1",
+	"properties": {
+		"content": {
+			"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/NYCTaxi_2/csv_format/part-00000-b160e540-6ae7-4534-b7bd-0882191fcbc5-c000.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n    ) AS [result]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
