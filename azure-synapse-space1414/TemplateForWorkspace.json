@@ -22,6 +22,15 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool2')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/azure-synapse-space1414-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -234,6 +243,46 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/PassengerCount SQL Script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/NYCTaxi_2/csv_format/part-00000-b160e540-6ae7-4534-b7bd-0882191fcbc5-c000.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PassengerCount SQL Script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/NYCTaxi_2/parquet_format/part-00000-a1c7277e-f6e6-44a4-9959-4f8b2906462b-c000.snappy.parquet',\n        FORMAT = 'PARQUET'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolNotebook1')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -250,7 +299,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "7b452b5a-3f3a-4a49-a2b3-1e50eecc3dfb"
+						"spark.autotune.trackingId": "2d9f90d3-2648-4891-8d50-5f67bda5ef89"
 					}
 				},
 				"metadata": {
@@ -268,7 +317,6 @@
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"df = spark.read.load(path=\"abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/Data/NYCTripSmall(DSP).parquet\",\n",
 							"                            format=\"parquet\")"
@@ -278,7 +326,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"display(df.limit(10))"
 						],
@@ -287,7 +334,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"spark.sql(\"CREATE DATABASE IF NOT EXISTS nyctaxi\")\n",
 							"df.write.mode(\"overwrite\").saveAsTable(\"nyctaxi.trip\")"
@@ -297,7 +343,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"df = spark.sql(\"SELECT * FROM nyctaxi.trip\")\n",
 							"display(df)"
@@ -307,7 +352,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"spark.sql(\"DROP TABLE nyctaxi.passengercountstats IF EXISTS\")"
 						],
@@ -316,7 +360,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"df = spark.sql(\"\"\"\n",
 							"                SELECT passenger_count,\n",
@@ -337,7 +380,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"df=spark.sql(\"SELECT * FROM nyctaxi.passengercountstats\")\n",
 							"display(df)"
@@ -348,6 +390,187 @@
 				]
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/StorageAccount1')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool2",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "5f1c6dee-2045-4b2e-ad74-2c5f642357cc"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/b3868f16-cd83-4412-9082-98862a609931/resourceGroups/AzSynapseRG/providers/Microsoft.Synapse/workspaces/azure-synapse-space1414/bigDataPools/SparkPool2",
+						"name": "SparkPool2",
+						"type": "Spark",
+						"endpoint": "https://azure-synapse-space1414.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool2",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"**Step 1 : Writing data into Storage Account**"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"print(\"hello world\")"
+						],
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"df = spark.sql(\"SELECT * FROM nyctaxi.passengercountstats\")\n",
+							"display(df)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"df.write.mode('overwrite').csv(\"/NYCTaxi/csv_format\")\n",
+							"df.write.mode('overwrite').parquet(\"/NYCTaxi/parquet_format\")"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"# we should make sure that there is single file during the writing process\n",
+							"df = spark.sql(\"SELECT * FROM nyctaxi.passengercountstats\")\n",
+							"\n",
+							"df = df.repartition(1)\n",
+							"\n",
+							"df.write.mode('overwrite').csv(\"/NYCTaxi_2/csv_format\")\n",
+							"df.write.mode('overwrite').parquet(\"/NYCTaxi_2/parquet_format\")"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"**Step 2: Analyze the data from the Storage Account**"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"df = spark.read.load('abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/NYCTaxi_2/parquet_format/part-00000-a1c7277e-f6e6-44a4-9959-4f8b2906462b-c000.snappy.parquet', format='parquet')\n",
+							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\n",
+							"df = spark.read.load('abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net/NYCTaxi_2/csv_format/part-00000-b160e540-6ae7-4534-b7bd-0882191fcbc5-c000.csv', format='csv',header=True)\n",
+							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool2')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 45
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 3,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "centralindia"
 		}
 	]
 }
