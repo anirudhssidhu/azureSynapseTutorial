@@ -1,0 +1,65 @@
+{
+	"name": "PipelineNotebook1",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPool2",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "dc346e9f-d9bd-4086-ae2e-8bd7aaa279ed"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/b3868f16-cd83-4412-9082-98862a609931/resourceGroups/AzSynapseRG/providers/Microsoft.Synapse/workspaces/azure-synapse-space1414/bigDataPools/SparkPool2",
+				"name": "SparkPool2",
+				"type": "Spark",
+				"endpoint": "https://azure-synapse-space1414.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool2",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.sql(\"SELECT * FROM nyctaxi.passengercountstats\")\n",
+					"\n",
+					"df = df.repartition(1)\n",
+					"\n",
+					"df.write.mode('overwrite').csv(\"/NYCTaxi_new/csv_format\")\n",
+					"df.write.mode('overwrite').parquet(\"/NYCTaxi_new/parquet_format\")"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
