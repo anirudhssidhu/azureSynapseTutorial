@@ -22,6 +22,15 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/DSqlPool1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/azure-synapse-space1414-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -193,6 +202,58 @@
 				"type": "SqlQuery"
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ctas1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE [dbo].[employees]\n(\n    empID int NOT NULL,\n    empName NVARCHAR(50),\n    gender NVARCHAR(50),\n    dept NVARCHAR(50)\n)\nWITH\n(\n    DISTRIBUTION = HASH(empID),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nINSERT INTO dbo.employees VALUES(1, 'John', 'Male', 'IT')\nINSERT INTO dbo.employees VALUES(2, 'Sophia', 'Female', 'HR')\nINSERT INTO dbo.employees VALUES(3, 'Vinny', 'Female', 'Sales')\nINSERT INTO dbo.employees VALUES(4, 'Tom', 'Male', 'IT')\nINSERT INTO dbo.employees VALUES(5, 'Jennifer', 'Female', 'IT')\nINSERT INTO dbo.employees VALUES(6, 'Bruce', 'Male', 'HR')\nINSERT INTO dbo.employees VALUES(7, 'David', 'Male', 'Sales')\nINSERT INTO dbo.employees VALUES(8, 'Neena', 'Female', 'Sales')\n\nSELECT * FROM [dbo].[employees]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSqlPool1",
+						"poolName": "DSqlPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ctas2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE dbo.employees_2\nWITH\n(\n    DISTRIBUTION = HASH(empID),\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.employees\nWHERE dept = 'IT'\n\n\nSELECT * FROM dbo.employees_2",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSqlPool1",
+						"poolName": "DSqlPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DSqlPool1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "centralindia"
 		}
 	]
 }
