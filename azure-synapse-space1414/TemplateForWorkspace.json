@@ -244,6 +244,46 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/ctas3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE dbo.employees_3\nWITH\n(\n    DISTRIBUTION = HASH(empName),\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.employees\nWHERE dept = 'IT'\n\n\nSELECT * FROM dbo.employees_3",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSqlPool1",
+						"poolName": "DSqlPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ctas4')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE dbo.employees_4\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.employees\nWHERE dept = 'IT'\n\n\nSELECT * FROM dbo.employees_4",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSqlPool1",
+						"poolName": "DSqlPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DSqlPool1')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
