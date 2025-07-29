@@ -1,0 +1,17 @@
+{
+	"name": "selectINTOvsCtas",
+	"properties": {
+		"content": {
+			"query": "SELECT *\nINTO dbo.employees_5\nFROM dbo.employees\n\nSELECT * FROM dbo.employees_5",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSqlPool1",
+				"poolName": "DSqlPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
