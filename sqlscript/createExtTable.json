@@ -1,0 +1,17 @@
+{
+	"name": "createExtTable",
+	"properties": {
+		"content": {
+			"query": "USE demoDb;\nGO\n\nCREATE SCHEMA NYCTaxi;\nGO\n\nCREATE EXTERNAL TABLE NYCTaxi.passengerDetails\nWITH(\n    LOCATION = 'synapsecontainer/NYCTaxi/Data',\n    DATA_SOURCE = myDateSource,\n    FILE_FORMAT = parquetFileFormat\n)\nAS \nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://gen2storageacc1414.dfs.core.windows.net/synapsecontainer/Data/NYCTripSmallSSP.parquet',\n        FORMAT = 'PARQUET'\n    ) AS [result]\nGO\n\nSELECT * FROM NYCTaxi.passengerDetails",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "demoDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
