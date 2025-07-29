@@ -115,12 +115,32 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"name": "[concat(parameters('workspaceName'), '/createExtDataSource')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
 					"query": "CREATE DATABASE demoDB;\nGO\n\nUSE demoDB\nGO\n\n-- DROP MASTER KEY;\n-- GO\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Password@123'\nGO\n\nCREATE DATABASE SCOPED CREDENTIAL myCredential\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE',\nSECRET = 'sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupyx&se=2025-07-29T18:30:11Z&st=2025-07-29T10:15:11Z&spr=https&sig=LJeiXC4Yk3ltgW2fuLkuWLRDNkpb5ijU2YWVJ4xLnxY%3D'\nGO\n\nCREATE EXTERNAL DATA SOURCE myDateSource WITH(\n    LOCATION = 'https://gen2storageacc1414.dfs.core.windows.net/',\n    CREDENTIAL = myCredential\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "demoDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/createExtFileFormat')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "USE demoDB;\nGO;\n\nCREATE EXTERNAL FILE FORMAT parquetFileFormat WITH(\n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n)",
 					"metadata": {
 						"language": "sql"
 					},
