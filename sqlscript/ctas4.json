@@ -1,0 +1,17 @@
+{
+	"name": "ctas4",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.employees_4\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.employees\nWHERE dept = 'IT'\n\n\nSELECT * FROM dbo.employees_4",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSqlPool1",
+				"poolName": "DSqlPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
