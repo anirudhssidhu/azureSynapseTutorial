@@ -324,6 +324,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/hadoopExtTable')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Create an external data source\n\nCREATE DATABASE SCOPED CREDENTIAL myCredentials\nWITH IDENTITY = 'Managed Identity'\nGO\n\nCREATE EXTERNAL DATA SOURCE myDataSource WITH(\n    LOCATION = 'abfss://synapsecontainer@gen2storageacc1414.dfs.core.windows.net',\n    CREDENTIAL = myCredentials,\n    TYPE = HADOOP\n)\nGO\n\n-- Create external file format\n\nCREATE EXTERNAL FILE FORMAT parquetFileFormat\nWITH\n(\n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n)\nGO\n\n-- Create hadoop external table\n\nCREATE EXTERNAL TABLE dbo.ext_table_hdp (\n\t[DateID] int,\n\t[MedallionID] int,\n\t[HackneyLicenseID] int,\n\t[PickupTimeID] int,\n\t[DropoffTimeID] int,\n\t[PickupGeographyID] int,\n\t[DropoffGeographyID] int,\n\t[PickupLatitude] float,\n\t[PickupLongitude] float,\n\t[PickupLatLong] nvarchar(4000),\n\t[DropoffLatitude] float,\n\t[DropoffLongitude] float,\n\t[DropoffLatLong] nvarchar(4000),\n\t[PassengerCount] int,\n\t[TripDurationSeconds] int,\n\t[TripDistanceMiles] float,\n\t[PaymentType] nvarchar(4000),\n\t[FareAmount] numeric(19,4),\n\t[SurchargeAmount] numeric(19,4),\n\t[TaxAmount] numeric(19,4),\n\t[TipAmount] numeric(19,4),\n\t[TollsAmount] numeric(19,4),\n\t[TotalAmount] numeric(19,4)\n\t)\n\tWITH (\n\tLOCATION = '/Data/NYCTripSmallSSP.parquet',\n\tDATA_SOURCE = myDataSource,\n\tFILE_FORMAT = parquetFileFormat\n\t)\nGO\n\nSELECT * FROM dbo.ext_table_hdp\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSqlPool1",
+						"poolName": "DSqlPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/selectINTOvsCtas')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
