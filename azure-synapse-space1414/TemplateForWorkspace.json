@@ -22,7 +22,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/DSqlPool1')]",
+			"name": "[concat(parameters('workspaceName'), '/DSQLPool')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -214,8 +214,8 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DSqlPool1",
-						"poolName": "DSqlPool1"
+						"databaseName": "DSQLPool",
+						"poolName": "DSQLPool"
 					},
 					"resultLimit": 5000
 				},
@@ -354,8 +354,8 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DSqlPool1",
-						"poolName": "DSqlPool1"
+						"databaseName": "DSQLPool",
+						"poolName": "DSQLPool"
 					},
 					"resultLimit": 5000
 				},
@@ -384,7 +384,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DSqlPool1')]",
+			"name": "[concat(parameters('workspaceName'), '/DSQLPool')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
