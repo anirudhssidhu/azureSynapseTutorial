@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "-- Explicityly inserting values into IDENTITY column --\n\nSET IDENTITY_INSERT dbo.T1 ON;\n\nINSERT INTO dbo.T1\n(\n    C1,\n    C2\n)\nVALUES (-1, 'UNKNOWN');\n\nSET IDENTITY_INSERT dbo.T1 OFF;\n\nSELECT * \nFROM dbo.T1;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSQLPool1",
+				"poolName": "DSQLPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

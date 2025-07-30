@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 3",
+	"properties": {
+		"content": {
+			"query": "--Loading the data --\n\n-- Create Table with Identity --\nCREATE TABLE dbo.T2\n(\n    C1 INT IDENTITY(1,1),\n    C2 VARCHAR(30)\n)\nWITH\n(\n    DISTRIBUTION = HASH(C2),\n    CLUSTERED COLUMNSTORE INDEX\n);\n\n\n-- Use Insert ... select to populate the table from an  table\n\nINSERT INTO dbo.T2\n(C2)\n\nSELECT C2\nFROM dbo.T1;\n\nSELECT * \nFROM dbo.T2;\n\nDBCC PDW_SHOWSPACEUSED('dbo.T2');",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSQLPool1",
+				"poolName": "DSQLPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

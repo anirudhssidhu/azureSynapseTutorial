@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.T1\n(\n    C1 INT IDENTITY(1,1) NOT NULL,\n    C2 VARCHAR(30) NULL\n)\nWITH\n(   \n    DISTRIBUTION = HASH(C2),\n    CLUSTERED COLUMNSTORE INDEX\n)\n\nSELECT * FROM dbo.T1\n\nINSERT INTO dbo.T1\nVALUES (NULL);\n\nINSERT INTO dbo.T1\nVALUES (NULL);\n\nINSERT INTO dbo.T1\nVALUES ('a');\n\nINSERT INTO dbo.T1\nVALUES ('b');\n-- space used for the table 1 --\nDBCC PDW_SHOWSPACEUSED('dbo.T1')",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSQLPool1",
+				"poolName": "DSQLPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
