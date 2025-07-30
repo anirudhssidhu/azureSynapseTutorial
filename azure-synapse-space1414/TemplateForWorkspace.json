@@ -22,7 +22,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/DSQLPool')]",
+			"name": "[concat(parameters('workspaceName'), '/DSQLPool1')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -136,6 +136,66 @@
 					"currentConnection": {
 						"databaseName": "newDB",
 						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE dbo.T1\n(\n    C1 INT IDENTITY(1,1) NOT NULL,\n    C2 VARCHAR(30) NULL\n)\nWITH\n(   \n    DISTRIBUTION = HASH(C2),\n    CLUSTERED COLUMNSTORE INDEX\n)\n\nSELECT * FROM dbo.T1\n\nINSERT INTO dbo.T1\nVALUES (NULL);\n\nINSERT INTO dbo.T1\nVALUES (NULL);\n\nINSERT INTO dbo.T1\nVALUES ('a');\n\nINSERT INTO dbo.T1\nVALUES ('b');\n-- space used for the table 1 --\nDBCC PDW_SHOWSPACEUSED('dbo.T1')",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSQLPool1",
+						"poolName": "DSQLPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Explicityly inserting values into IDENTITY column --\n\nSET IDENTITY_INSERT dbo.T1 ON;\n\nINSERT INTO dbo.T1\n(\n    C1,\n    C2\n)\nVALUES (-1, 'UNKNOWN');\n\nSET IDENTITY_INSERT dbo.T1 OFF;\n\nSELECT * \nFROM dbo.T1;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSQLPool1",
+						"poolName": "DSQLPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "--Loading the data --\n\n-- Create Table with Identity --\nCREATE TABLE dbo.T2\n(\n    C1 INT IDENTITY(1,1),\n    C2 VARCHAR(30)\n)\nWITH\n(\n    DISTRIBUTION = HASH(C2),\n    CLUSTERED COLUMNSTORE INDEX\n);\n\n\n-- Use Insert ... select to populate the table from an  table\n\nINSERT INTO dbo.T2\n(C2)\n\nSELECT C2\nFROM dbo.T1;\n\nSELECT * \nFROM dbo.T2;\n\nDBCC PDW_SHOWSPACEUSED('dbo.T2');",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSQLPool1",
+						"poolName": "DSQLPool1"
 					},
 					"resultLimit": 5000
 				},
@@ -464,7 +524,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DSQLPool')]",
+			"name": "[concat(parameters('workspaceName'), '/DSQLPool1')]",
 			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
