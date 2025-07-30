@@ -7,8 +7,8 @@
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "DSqlPool1",
-				"poolName": "DSqlPool1"
+				"databaseName": "DSQLPool",
+				"poolName": "DSQLPool"
 			},
 			"resultLimit": 5000
 		},
