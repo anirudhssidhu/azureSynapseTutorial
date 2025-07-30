@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 4",
+	"properties": {
+		"content": {
+			"query": "-- System views\n\nSELECT  sm.name\n,       tb.name\n,       co.name\n,       CASE WHEN ic.column_id IS NOT NULL\n             THEN 1\n        ELSE 0\n        END AS is_identity\nFROM        sys.schemas AS sm\nJOIN        sys.tables  AS tb           ON  sm.schema_id = tb.schema_id\nJOIN        sys.columns AS co           ON  tb.object_id = co.object_id\nLEFT JOIN   sys.identity_columns AS ic  ON  co.object_id = ic.object_id\n                                        AND co.column_id = ic.column_id\nWHERE   sm.name = 'dbo'\nAND     tb.name = 'T1'\n;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSQLPool1",
+				"poolName": "DSQLPool1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
