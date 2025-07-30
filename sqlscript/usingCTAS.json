@@ -1,0 +1,17 @@
+{
+	"name": "usingCTAS",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.table_1\nWITH(\n    DISTRIBUTION = HASH(MedallionID),\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.ext_table_hdp\n\nSELECT * FROM dbo.table_1",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DSQLPool",
+				"poolName": "DSQLPool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
