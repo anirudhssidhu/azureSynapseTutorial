@@ -22,15 +22,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/DSQLPool1')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/azure-synapse-space1414-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -190,6 +181,46 @@
 			"properties": {
 				"content": {
 					"query": "--Loading the data --\n\n-- Create Table with Identity --\nCREATE TABLE dbo.T2\n(\n    C1 INT IDENTITY(1,1),\n    C2 VARCHAR(30)\n)\nWITH\n(\n    DISTRIBUTION = HASH(C2),\n    CLUSTERED COLUMNSTORE INDEX\n);\n\n\n-- Use Insert ... select to populate the table from an  table\n\nINSERT INTO dbo.T2\n(C2)\n\nSELECT C2\nFROM dbo.T1;\n\nSELECT * \nFROM dbo.T2;\n\nDBCC PDW_SHOWSPACEUSED('dbo.T2');",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSQLPool1",
+						"poolName": "DSQLPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 4')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- System views\n\nSELECT  sm.name\n,       tb.name\n,       co.name\n,       CASE WHEN ic.column_id IS NOT NULL\n             THEN 1\n        ELSE 0\n        END AS is_identity\nFROM        sys.schemas AS sm\nJOIN        sys.tables  AS tb           ON  sm.schema_id = tb.schema_id\nJOIN        sys.columns AS co           ON  tb.object_id = co.object_id\nLEFT JOIN   sys.identity_columns AS ic  ON  co.object_id = ic.object_id\n                                        AND co.column_id = ic.column_id\nWHERE   sm.name = 'dbo'\nAND     tb.name = 'T1'\n;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DSQLPool1",
+						"poolName": "DSQLPool1"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- find the highest allocated value for a table\n-- SQL script 5\n\nSELECT MAX(C1) FROM dbo.T1\n\nSELECT * FROM dbo.T1\n\n-- Find the seed and increment for the IDENTITY property --\n\nSELECT  sm.name\n,       tb.name\n,       co.name\n,       CASE WHEN ic.column_id IS NOT NULL\n             THEN 1\n        ELSE 0\n        END AS is_identity\nFROM        sys.schemas AS sm\nJOIN        sys.tables  AS tb           ON  sm.schema_id = tb.schema_id\nJOIN        sys.columns AS co           ON  tb.object_id = co.object_id\nLEFT JOIN   sys.identity_columns AS ic  ON  co.object_id = ic.object_id\n                                        AND co.column_id = ic.column_id\nWHERE   sm.name = 'dbo'\nAND     tb.name = 'T1'\n;",
 					"metadata": {
 						"language": "sql"
 					},
@@ -509,7 +540,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE TABLE dbo.table_1\nWITH(\n    DISTRIBUTION = HASH(MedallionID),\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.ext_table_hdp\n\nSELECT * FROM dbo.table_1",
+					"query": "CREATE TABLE dbo.table_1\nWITH(\n    DISTRIBUTION = HASH(MedallionID),\n    CLUSTERED COLUMNSTORE INDEX\n)\nAS\nSELECT * FROM dbo.ext_table_hdp\n\nSELECT * FROM dbo.table_1\n\nSELECT * FROM dbo.table_1",
 					"metadata": {
 						"language": "sql"
 					},
@@ -522,18 +553,6 @@
 				"type": "SqlQuery"
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DSQLPool1')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "centralindia"
 		}
 	]
 }
